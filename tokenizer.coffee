@@ -1,13 +1,13 @@
 module = @
-ltrim = (text, subtext)->
-  len = subtext.length
-  loop
-    ch = text[0]
-    if -1 != subtext.indexOf ch
-      text = text.substr 1
-      continue
-    break
-  text
+# ltrim = (text, subtext)->
+#   len = subtext.length
+#   loop
+#     ch = text[0]
+#     if -1 != subtext.indexOf ch
+#       text = text.substr 1
+#       continue
+#     break
+#   text
 
 
 strict_rule = require './strict_rule'
@@ -70,7 +70,8 @@ class @Tokenizer
     return null if !ret
     @text = @text.substr ret[0].length
     @tail_space_len = /^[ \t]*/.exec(@text)[0].length
-    @text = ltrim(@text, ' \t')
+    # @text = ltrim(@text, ' \t')
+    @text = @text.substr @tail_space_len
     ret
   initial_prepare_table: ()->
     @positive_symbol_table = {}
@@ -162,7 +163,7 @@ class @Tokenizer
           continue
         break
       
-      @regex loc_arr_refined[0].regex
+      @regex loc_arr_refined[0].regex if loc_arr_refined[0].regex
       
       for v in loc_arr_refined
         v.mx_hash.tail_space = +@tail_space_len
