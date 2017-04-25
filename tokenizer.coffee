@@ -44,7 +44,7 @@ class @Tokenizer
   prepare   : []
   afterparty  : []
   is_prepared : false
-  tail_space_len: false
+  tail_space_len: 0
   
   @first_char_table  : {}
   @profile  : false
@@ -69,7 +69,7 @@ class @Tokenizer
     ret = regex.exec(@text)
     return null if !ret
     @text = @text.substr ret[0].length
-    @tail_space_len = /^\s*/.exec(@text)[0].length
+    @tail_space_len = /^[ \t]*/.exec(@text)[0].length
     @text = ltrim(@text, ' \t')
     ret
   initial_prepare_table: ()->
