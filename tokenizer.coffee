@@ -2,8 +2,9 @@ module = @
 ltrim = (text, subtext)->
   len = subtext.length
   loop
-    if subtext == text.substr 0, len
-      text = text.substr len
+    ch = text[0]
+    if -1 != subtext.indexOf ch
+      text = text.substr 1
       continue
     break
   text
@@ -43,7 +44,7 @@ class @Tokenizer
   prepare   : []
   afterparty  : []
   is_prepared : false
-  is_tail_space: false
+  tail_space_len: false
   
   @first_char_table  : {}
   @profile  : false
@@ -68,7 +69,7 @@ class @Tokenizer
     ret = regex.exec(@text)
     return null if !ret
     @text = @text.substr ret[0].length
-    @is_tail_space = /^\s/.test @text
+    @tail_space_len = /^\s*/.exec(@text).length
     @text = ltrim(@text, ' \t')
     ret
   initial_prepare_table: ()->
@@ -164,7 +165,7 @@ class @Tokenizer
       @regex loc_arr_refined[0].regex
       
       for v in loc_arr_refined
-        v.mx_hash.tail_space = +@is_tail_space
+        v.mx_hash.tail_space = +@tail_space_len
       
       if @atparse_unique_check
         if ret_proxy_list.length > 1

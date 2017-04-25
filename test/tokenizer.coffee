@@ -79,6 +79,15 @@ describe 'tokenizer section', ()->
     assert.equal list[0][0].mx_hash.hash_key, 'id'
     assert.equal list[0].length, 2 # because use base
     return
+  
+  it 'regex id space', ()->
+    t = new g.Tokenizer
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/)
+    list = t.go 'a '
+    assert.equal list[0][0].mx_hash.hash_key, 'id'
+    assert.equal list[0][0].mx_hash.tail_space, '1'
+    assert.equal list[0].length, 2 # because use base
+    return
   # NOTE use_base NOT implemented
   # it 'regex id no base', ()->
     # t = new g.Tokenizer
