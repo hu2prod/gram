@@ -53,16 +53,16 @@ describe 'gram_rule section', ()->
   
   it 'priority', ()->
     gram = new Gram
-    gram.rule('bin_op',  '*|/|%')         .mx('@priority=5')
-    gram.rule('bin_op',  '+|-')         .mx('@priority=6')
+    gram.rule('bin_op',  '*|/|%')             .mx('@priority=5')
+    gram.rule('bin_op',  '+|-')               .mx('@priority=6')
     
     base_priority = -9000
-    gram.rule('expr',  '( #expr )')             .mx("@priority=#{base_priority}")
+    gram.rule('expr',  '( #expr )')           .mx("@priority=#{base_priority}")
     
-    gram.rule('expr',  '#expr #bin_op #expr')       .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority<#bin_op.priority')
-    gram.rule('expr',  '#expr #bin_op #expr')       .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority=#bin_op.priority #bin_op.left_assoc')
+    gram.rule('expr',  '#expr #bin_op #expr') .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority<#bin_op.priority')
+    gram.rule('expr',  '#expr #bin_op #expr') .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority=#bin_op.priority #bin_op.left_assoc')
     
-    gram.rule('expr',  'a|b|c')         .mx('@priority=-9000')
+    gram.rule('expr',  'a|b|c')               .mx('@priority=-9000')
     
     res = gram.parse 'a + b'
     assert.equal res.length, 1
@@ -79,16 +79,16 @@ describe 'gram_rule section', ()->
   it 'performance', ()->
     base_priority = -9000
     gram = new Gram
-    gram.rule('bin_op',  '*|/|%')         .mx('@priority=5 right_assoc=1')
-    gram.rule('bin_op',  '+|-')         .mx('@priority=6 right_assoc=1')
+    gram.rule('bin_op',  '*|/|%')             .mx('@priority=5 right_assoc=1')
+    gram.rule('bin_op',  '+|-')               .mx('@priority=6 right_assoc=1')
     
-    gram.rule('expr',  '( #expr )')             .mx("@priority=#{base_priority}")
+    gram.rule('expr',  '( #expr )')           .mx("@priority=#{base_priority}")
     
-    gram.rule('expr',  '#expr #bin_op #expr')       .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority<#bin_op.priority')
-    gram.rule('expr',  '#expr #bin_op #expr')       .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority=#bin_op.priority #bin_op.left_assoc')
-    gram.rule('expr',  '#expr #bin_op #expr')       .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority=#bin_op.priority #expr[2].priority<#bin_op.priority #bin_op.right_assoc')
+    gram.rule('expr',  '#expr #bin_op #expr') .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority<#bin_op.priority')
+    gram.rule('expr',  '#expr #bin_op #expr') .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority=#bin_op.priority #bin_op.left_assoc')
+    gram.rule('expr',  '#expr #bin_op #expr') .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority=#bin_op.priority #expr[2].priority<#bin_op.priority #bin_op.right_assoc')
     
-    gram.rule('expr',  'a|b|c')         .mx('@priority=-9000')
+    gram.rule('expr',  'a|b|c')               .mx('@priority=-9000')
     list = [
       'a + a + a'
       'a + a + a + a'
