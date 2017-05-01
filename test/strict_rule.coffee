@@ -68,6 +68,14 @@ describe 'strict_rule_parser section', ()->
     '$1<1'  : false
     '$1>1'  : false
     '$1&&1'  : true
+    '$1+1'  : 2
+    '$1-1'  : 0
+    '$1*2'  : 2
+    '$1||2' : 1
+    '$1&&2' : 2
+    # it's bool operator
+    '$1|2' : 1
+    '$1&2' : 2
   for k,v of hash
     do (k,v)->
       it "check #{k}", ()->
@@ -82,6 +90,29 @@ describe 'strict_rule_parser section', ()->
         t = strict_rule_parser.parse v
         util.throws ()->
           t.check([new Node '1'])
+  
+  list = """
+    $2
+    #a
+  """.split /\n/g
+  for v in list
+    do (v)->
+      it "#{v} should parse but fail at exec", ()->
+        t = strict_rule_parser.parse v
+        util.throws ()->
+          t.check([new Node '1'])
+  list = """
+    #a[2]
+    #b
+  """.split /\n/g
+  for v in list
+    do (v)->
+      it "#{v} should parse but fail at exec", ()->
+        t = strict_rule_parser.parse v
+        util.throws ()->
+          n = new Node '1'
+          t.optimize_run([n], {a:[n]})
+  
   list = """
     $1^1
     +

@@ -144,10 +144,12 @@ class @Strict_rule
       # nothing
     else if @position_type == '#position'
       selected = name_env[@value]
-      throw new Error "#position '#{@value}' not exists" if !selected?
+      if !selected?
+        throw new Error "#position '#{@value}' not exists"
       if @number_access?
         selected = selected[@number_access-1]
-        throw new Error "#position '#{@value}'[#{@number_access}] not exists" if !selected?
+        if !selected?
+          throw new Error "#position '#{@value}'[#{@number_access}] not exists"
       else
         selected = selected[0]
       @position_type = '$position'
@@ -257,7 +259,7 @@ class Strict_rule_parser
       throw new Error "must be identifier or string in rule"
     ret
   parse_bin_op: ()->
-    ret = @regex(/^(==?|!=|<>|<=?|>=?|\||\-|\+|\*|&&|\|\|)/)
+    ret = @regex(/^(==?|!=|<>|<=?|>=?|\-|\+|\*|&&?|\|\|?)/)
     return null if !ret
     return new module.Strict_rule
       position_type   : 'bin_op'
