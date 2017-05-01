@@ -67,6 +67,16 @@ class Gram_console
     ret
 @gram_console = new Gram_console
 
+@gram_unescape= (v) ->
+  v = str_replace '[PIPE]',   '|', v
+  v = str_replace '[QUESTION]','?', v
+  v = str_replace '[DOLLAR]', '$', v # нужно в случае конструкций ${}, когда нельзя отделить $ от токена
+  v = str_replace '[HASH]',   '#', v
+@gram_escape = (v) ->
+  v = str_replace '|', '[PIPE]',   v
+  v = str_replace '?', '[QUESTION]',   v
+  v = str_replace '$', '[DOLLAR]', v
+  v = str_replace '#', '[HASH]',   v
 class @Gram_rule
   ret_name  : null
   signature   : ''
@@ -107,22 +117,12 @@ class @Gram_rule
     for v in res
       @strict_list.push v
     @
-  gram_unescape: (v) ->  
-    v = str_replace '[PIPE]',   '|', v
-    v = str_replace '[QUESTION]','?', v
-    v = str_replace '[DOLLAR]', '$', v # нужно в случае конструкций ${}, когда нельзя отделить $ от токена
-    v = str_replace '[HASH]',   '#', v
-  gram_escape: (v) ->
-    v = str_replace '|', '[PIPE]',   v
-    v = str_replace '?', '[QUESTION]',   v
-    v = str_replace '$', '[DOLLAR]', v
-    v = str_replace '#', '[HASH]',   v
   parse_rule  : (str_pipe_list) ->
     @signature += "#{str_pipe_list} "
     ret_list = []
     list = str_pipe_list.split '|'
     for v,k in list
-      v = @gram_unescape v
+      v = module.gram_unescape v
       if v[0] == '#' and v.length > 1
         ref = @add_ref v.substr 1
         ref.position = @sequence.length
@@ -291,7 +291,7 @@ class Gram_rule_parser
     proxy_rule_key_list = {}
     hash_ref = false
     has_raw = false
-    split_list = str_list.split ' '
+    split_list = str_list.split /\s+/g
     for v in split_list
       if ((v[0] == '#' or v[0] == '$') and (v.length>1))
         hash_ref = true
@@ -312,7 +312,7 @@ class Gram_rule_parser
               throw new Error "piped and mixed not implemented in single gram rule '#{str_list}'" if -1 != v.indexOf '|'
             # puts "Warning rule '#{str_list}' can be processed invalid way"
           proxy_key = "proxy_#{v}"
-          proxy_rule_key_list[proxy_key] = v
+          proxy_rule_key_list[module.gram_unescape proxy_key] = v
           split_list[k] = "#"+proxy_key
     for v in split_list
       loc = []

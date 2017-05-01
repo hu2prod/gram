@@ -155,3 +155,54 @@ describe 'gram_rule section', ()->
     res = gram.parse "pos1 pos2 pos3 pos4"
     assert res.length, 1
   
+  it 'repeat left', ()->
+    gram = new Gram
+    gram.rule('multipipe',  'a')
+    gram.rule('multipipe',  '#multipipe a')
+    res = gram.parse 'a a'
+    assert.equal res.length, 1
+  
+  it 'repeat right', ()->
+    gram = new Gram
+    gram.rule('multipipe',  'a')
+    gram.rule('multipipe',  'a #multipipe')
+    res = gram.parse 'a a'
+    assert.equal res.length, 1
+  
+  it 'escaping |', ()->
+    gram = new Gram
+    gram.rule('multipipe',  '[PIPE]')
+    res = gram.parse '|'
+    assert.equal res.length, 1
+  
+  it 'escaping ?', ()->
+    gram = new Gram
+    gram.rule('multipipe',  '[QUESTION]')
+    res = gram.parse '?'
+    assert.equal res.length, 1
+  
+  it 'escaping $', ()->
+    gram = new Gram
+    gram.rule('multipipe',  '[DOLLAR]')
+    res = gram.parse '?'
+    assert.equal res.length, 1
+  
+  it 'escaping #', ()->
+    gram = new Gram
+    gram.rule('multipipe',  '[HASH]')
+    res = gram.parse '?'
+    assert.equal res.length, 1
+  
+  it 'escaping 2', ()->
+    gram = new Gram
+    gram.rule('multipipe',  '[PIPE] [PIPE]')
+    res = gram.parse '| |'
+    assert.equal res.length, 1
+  
+  it 'escaping 3', ()->
+    gram = new Gram
+    gram.rule('multipipe',  '[PIPE]')
+    gram.rule('multipipe',  '#multipipe [PIPE]')
+    res = gram.parse '| |'
+    assert.equal res.length, 1
+  
