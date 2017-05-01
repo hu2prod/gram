@@ -56,7 +56,8 @@ describe 'gram_rule section', ()->
     gram.rule('bin_op',  '*|/|%')         .mx('@priority=5')
     gram.rule('bin_op',  '+|-')         .mx('@priority=6')
     
-    gram.rule('expr',  '( #expr )')             .mx('@priority=#{base_priority}')
+    base_priority = -9000
+    gram.rule('expr',  '( #expr )')             .mx("@priority=#{base_priority}")
     
     gram.rule('expr',  '#expr #bin_op #expr')       .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority<#bin_op.priority')
     gram.rule('expr',  '#expr #bin_op #expr')       .mx('@priority=#bin_op.priority')       .strict('#expr[1].priority<#bin_op.priority #expr[2].priority=#bin_op.priority #bin_op.left_assoc')

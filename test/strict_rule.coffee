@@ -9,40 +9,108 @@ mx_node = strict_rule.mx_node
 
 
 describe 'strict_rule_parser section', ()->
-  it 'works', ()->
-    list = [
-      '#a'
-      '#a[1]'
-      '#a[1][1:2]'
-      '$1==1'
-      '$1==$2'
-      '$1+$2'
-      '$1|$2'
-    ]
-    for v in list
-      strict_rule_parser.parse v
-    return
+  list = """
+    #a
+    #a[1]
+    #a[1][1:2]
+    $1
+    $1==1
+    $1==$2
+    $1+$2
+    $1|$2
+    $1=="1"
+    $1=='1'
+    $1+1==$2
+    !#a
+    !$1
+    #a.a
+    $1.a
+    #a[1:2]
+    $1[1:2]
+  """.split /\n/g
+  for v in list
+    do (v)->
+      it "#{v} works", ()->
+        t = strict_rule_parser.parse v
+        t.get_actual_signature() # coverage
+        return
+  list = """
+    #a
+    #a 
+     #a
+     #a 
+    #a #b
+    #a #b 
+     #a #b 
+     #a  #b 
+  """.split /\n/g
+  for v in list
+    do (v)->
+      it "#{v} works", ()->
+        strict_rule_parser.parse_as_arr v
+        return
   
   it 'check', ()->
-    t = strict_rule_parser.parse '$1==one'
+    t = strict_rule_parser.parse '$1=="one"'
     assert.ok t.check [new Node 'one']
     assert.ok !t.check [new Node 'two']
-
-describe 'max_rule_parser section', ()->
+  
+  hash = 
+    '!$1==0' : true
+    '!!$1' : true # true is not representable as number, so just avoid ==1
+    '!!!$1==0' : true
+    '$1==1' : true
+    '$1[0:0]==1' : true
+    '$1<=1' : true
+    '$1>=1' : true
+    '$1!=1' : false
+    '$1<>1' : false
+    '$1<1'  : false
+    '$1>1'  : false
+    '$1&&1'  : true
+  for k,v of hash
+    do (k,v)->
+      it "check #{k}", ()->
+        t = strict_rule_parser.parse k
+        assert.equal t.check([new Node '1']), v
+  list = """
+    $2
+  """.split /\n/g
+  for v in list
+    do (v)->
+      it "should not check #{v}", ()->
+        t = strict_rule_parser.parse v
+        util.throws ()->
+          t.check([new Node '1'])
+  list = """
+    $1^1
+    +
+    $1+
+  """.split /\n/g
+  for v in list
+    do (v)->
+      it "#{v} should not parse", ()->
+        util.throws ()->
+          strict_rule_parser.parse v
+  
+describe 'mx_rule_parser section', ()->
   it 'works', ()->
-    list = [
-      'r' # autoassign
-      'r=1'
-      '@r=1'
-      'r=#a'
-      'r=#a[1]'
-      'r=#a[1][1:2]'
-      'r=$1==1'
-      'r=$1==$2'
-      'r=$1+$2'
-      'r=$1|$2'
-      'a=1 b=2'
-    ]
+    list = """
+      r
+      r=1
+      @r=1
+      r=#a
+      r=#a[1]
+      r=#a[1][1:2]
+      r=$1==1
+      r=$1==$2
+      r=$1+$2
+      r=$1|$2
+      a=1 b=2
+      a=1  b=2
+      a=1 b=2 
+       a=1 b=2 
+    """.split /\n/g
     for v in list
       mx_rule_parser.parse_as_arr v
     return

@@ -49,7 +49,7 @@ class @Strict_rule
       continue if typeof v == 'function'
       ret[k] = clone v unless ret[k] == v
     ret
-  compile     : ()-># >>>
+  # compile     : ()-># >>>
   intelligent_type_cast: (t)->
     parsed = parseFloat t
     if parsed.toString() == t then parsed else t
@@ -68,11 +68,13 @@ class @Strict_rule
       return left  <= right if @value == '<='
       return left  >  right if @value == '>'
       return left  >= right if @value == '>='
+      ### !pragma coverage-skip-next ###
       throw new Error "invalid bin_op #{@value}"
     else if @position_type == 'pre_op'
       left  = @left.check pos_env
       return left if @value == 'dummy' or @value == 'none'
       return !left if @value == '!'
+      ### !pragma coverage-skip-next ###
       throw new Error "invalid pre_op #{@value}"
     else if @position_type == '$position'
       selected = pos_env[@value-1]
@@ -87,6 +89,7 @@ class @Strict_rule
       return false if @value == '0'
       return @value
     else
+      ### !pragma coverage-skip-block ###
       throw new Error "invalid position_type #{@position_type}"
   get_affected_position_list : (name_env = {}, console_log = true)->
     if @position_type == 'pre_op'
@@ -119,9 +122,15 @@ class @Strict_rule
       selected = "#{selected}.#{@child_access}" if @child_access
       selected = "#{selected}[#{@slice[0]}:#{@slice[1]}]" if @slice
       return selected
+    else if @position_type == '#position'
+      selected = "##{@value}"
+      selected = "#{selected}.#{@child_access}" if @child_access
+      selected = "#{selected}[#{@slice[0]}:#{@slice[1]}]" if @slice
+      return selected
     else if @position_type == 'constant'
       return @value
     else
+      ### !pragma coverage-skip-block ###
       throw new Error "invalid position_type #{@position_type}"
   rebuild_signature : ()->
     @signature = @get_actual_signature()
@@ -146,6 +155,7 @@ class @Strict_rule
     else if @position_type == 'constant'
       # nothing
     else
+      ### !pragma coverage-skip-block ###
       throw new Error "invalid position_type #{@position_type}"
     return
     
@@ -164,26 +174,26 @@ class Strict_rule_parser
       continue if skip
       ret.push @parse v
     ret
-  parse_as1 : (str_list)->
-    ret = null
-    for v in str_list.split ' '
-      continue if v == ''
-      loc = @parse v
-      if ret == null
-        ret = loc
-        continue
-      ret = new module.Strict_rule
-        position_type  : 'bin_op' 
-        value      : 'and'
-        left       : ret
-        right      : loc
-      
-    if ret == null
-       ret = new module.Strict_rule
-        position_type   : 'constant'
-        value       : true
-    ret.signature = str_list
-    ret
+  # parse_as1 : (str_list)->
+  #   ret = null
+  #   for v in str_list.split ' '
+  #     continue if v == ''
+  #     loc = @parse v
+  #     if ret == null
+  #       ret = loc
+  #       continue
+  #     ret = new module.Strict_rule
+  #       position_type  : 'bin_op' 
+  #       value      : 'and'
+  #       left       : ret
+  #       right      : loc
+  #     
+  #   if ret == null
+  #      ret = new module.Strict_rule
+  #       position_type   : 'constant'
+  #       value       : true
+  #   ret.signature = str_list
+  #   ret
   parse     : (string)->
     @string = string
     
@@ -196,7 +206,6 @@ class Strict_rule_parser
     throw new Error "bin_op expected" if !bin_op
     
     right  = @parse_position()
-    throw new Error "position expected after bin_op" if !bin_op
     
     bin_op.left   = left
     bin_op.right  = right
@@ -238,8 +247,6 @@ class Strict_rule_parser
         reg_ret = @regex(/^\'([^\']*)\'/)
       if !reg_ret
         reg_ret = @regex(/^(\d*\.\d+|\d+)/) # float/int
-      if !reg_ret
-        reg_ret = @regex(/^(.*)/) # other constants
       
       if reg_ret
         merge_position.left = new module.Strict_rule
@@ -250,7 +257,7 @@ class Strict_rule_parser
       throw new Error "must be identifier or string in rule"
     ret
   parse_bin_op: ()->
-    ret = @regex(/^(==?|!=|<>|<=?|>=?|\||\-|\+|\*)/)
+    ret = @regex(/^(==?|!=|<>|<=?|>=?|\||\-|\+|\*|&&|\|\|)/)
     return null if !ret
     return new module.Strict_rule
       position_type   : 'bin_op'
