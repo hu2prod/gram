@@ -74,7 +74,7 @@ describe 'tokenizer section', ()->
   # ###################################################################################################
   it 'regex id', ()->
     t = new g.Tokenizer
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/)
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i)
     list = t.go 'a'
     assert.equal list[0][0].mx_hash.hash_key, 'id'
     assert.equal list[0].length, 2 # because use base
@@ -82,7 +82,7 @@ describe 'tokenizer section', ()->
   
   it 'regex id space', ()->
     t = new g.Tokenizer
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/)
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i)
     list = t.go 'a  '
     assert.equal list[0][0].mx_hash.hash_key, 'id'
     assert.equal list[0][0].mx_hash.tail_space, '2'
@@ -92,7 +92,7 @@ describe 'tokenizer section', ()->
   # it 'regex id no base', ()->
     # t = new g.Tokenizer
     # t.use_base = false
-    # t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/)
+    # t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i)
     # list = t.go 'a'
     # assert.equal list[0][0].mx_hash.hash_key, 'id'
     # assert.equal list[0].length, 1
@@ -100,7 +100,7 @@ describe 'tokenizer section', ()->
   
   it 'regex id atparse pass', ()->
     t = new g.Tokenizer
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/, (_this, ret_proxy, v)->
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i, (_this, ret_proxy, v)->
       n = new g.Node
       n.mx_hash.hash_key = 'id_patch'
       ret_proxy.push [n]
@@ -113,7 +113,7 @@ describe 'tokenizer section', ()->
   # it 'regex id atparse noadd no base', ()->
   #   t = new g.Tokenizer
   #   t.use_base = false
-  #   t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/, (_this, ret_proxy, v)->
+  #   t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i, (_this, ret_proxy, v)->
   #     return
   #   )
   #   list = t.go 'a'
@@ -122,7 +122,7 @@ describe 'tokenizer section', ()->
   
   # it 'regex id atparse reject', ()->
     # t = new g.Tokenizer
-    # t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/, (_this, ret_proxy, v)->
+    # t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i, (_this, ret_proxy, v)->
       # if /^if/.test v
         # @reject()
         # return
@@ -138,7 +138,7 @@ describe 'tokenizer section', ()->
   
   it 'regex id repeat letters', ()->
     t = new g.Tokenizer
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/)
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i)
     list = t.go 'aa'
     assert.equal list[0][0].mx_hash.hash_key, 'id'
     return
@@ -146,7 +146,7 @@ describe 'tokenizer section', ()->
   it 'regex id with unused regex', ()->
     t = new g.Tokenizer
     t.parser_list.push (new g.Token_parser 'if', /^if/)
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/)
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i)
     list = t.go 'a'
     assert.equal list[0][0].mx_hash.hash_key, 'id'
     return
@@ -154,7 +154,7 @@ describe 'tokenizer section', ()->
   it 'regex id fll', ()->
     t = new g.Tokenizer
     t.parser_list.push (new g.Token_parser 'if', /^if/)
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
     list = t.go 'a'
     assert.equal list[0][0].mx_hash.hash_key, 'id'
     return
@@ -169,7 +169,7 @@ describe 'tokenizer section', ()->
   
   it 'multiple call regex id', ()->
     t = new g.Tokenizer
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
     list = t.go 'a'
     assert.equal list[0][0].mx_hash.hash_key, 'id'
     list = t.go 'a'
@@ -178,7 +178,7 @@ describe 'tokenizer section', ()->
   
   it 'regex identifier bin_op', ()->
     t = new g.Tokenizer
-    t.parser_list.push (new g.Token_parser 'identifier', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'identifier', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
     t.parser_list.push  new g.Token_parser 'bin_op',   /^[\+\-\*\/]/
     token_list = t.go "a+b"
     assert.equal token_list[0][0].mx_hash.hash_key, 'identifier'
@@ -189,22 +189,22 @@ describe 'tokenizer section', ()->
   it 'fll reject test', ()->
     t = new g.Tokenizer
     t.parser_list.push (new g.Token_parser 'a', /^a/).fll_add('a')
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
     list = t.go 'ab'
     assert.equal list[0][0].mx_hash.hash_key, 'id'
     return
   
   it 'can\'t parse', ()->
     t = new g.Tokenizer
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
     assert.throws ()->
       t.go '123'
     return
   
   it 'multiple parse', ()->
     t = new g.Tokenizer
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
-    t.parser_list.push (new g.Token_parser 'id2', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'id2', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
     token_list = t.go 'abc'
     assert.equal token_list[0][0].mx_hash.hash_key, 'id'
     assert.equal token_list[0][1].mx_hash.hash_key, 'id2'
@@ -213,15 +213,15 @@ describe 'tokenizer section', ()->
   it 'single parse with atparse_unique_check', ()->
     t = new g.Tokenizer
     t.atparse_unique_check = true
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
     t.go 'abc'
     return
   
   it 'multiple parse with atparse_unique_check', ()->
     t = new g.Tokenizer
     t.atparse_unique_check = true
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
-    t.parser_list.push (new g.Token_parser 'id2', /^[_a-zA-Z][_a-zA-Z0-9]*/).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.parser_list.push (new g.Token_parser 'id2', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
     util.throws ()->
       t.go 'abc'
     return
