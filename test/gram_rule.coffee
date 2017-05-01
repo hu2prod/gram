@@ -35,8 +35,45 @@ describe 'gram_rule section', ()->
     gram.rule('sample', 'result')
     res = gram.parse 'result'
     res.sort (a,b)-> -a.mx_hash.hash_key.localeCompare b
-    
     assert.equal res[0].mx_hash.hash_key, 'base'
+    assert.equal res[0].value, 'result'
+    assert.equal res[0].value_array[0].value, 'result'
+  
+  it 'sample optimize', ()->
+    gram = new Gram
+    gram.rule('sample', 'result')
+    gram.rule('sample', '#t1')
+    gram.rule('t1',     'result')
+    res = gram.parse 'result', expected_token: 'sample'
+    assert.equal res.length, 1
+  
+  it 'sample mode_full', ()->
+    gram = new Gram
+    gram.mode_full = true
+    gram.rule('sample', 'result')
+    gram.rule('sample', '#t1')
+    gram.rule('t1',     'result')
+    res = gram.parse 'result', expected_token: 'sample'
+    assert.equal res.length, 2
+  
+  it 'sample mode_full 2', ()->
+    gram = new Gram
+    gram.mode_full = true
+    gram.rule('sample', 'result')
+    gram.rule('sample', '#t1')
+    gram.rule('t1',     'result')
+    res = gram.parse 'result'
+    # base, sample, t1, sample
+    assert.equal res.length, 4
+    
+  
+  it 'sample expected token', ()->
+    gram = new Gram
+    gram.rule('sample', 'result')
+    res = gram.parse 'result', expected_token : 'sample'
+    res.sort (a,b)-> -a.mx_hash.hash_key.localeCompare b
+    
+    assert.equal res[0].mx_hash.hash_key, 'sample'
     assert.equal res[0].value, 'result'
     assert.equal res[0].value_array[0].value, 'result'
   
