@@ -45,6 +45,7 @@ class @Tokenizer
   afterparty  : []
   is_prepared : false
   tail_space_len: 0
+  ret_access : []
   
   @first_char_table  : {}
   @profile  : false
@@ -123,7 +124,7 @@ class @Tokenizer
       node.mx_hash.hash_key = 'base'
       add_list.push node
       return
-    @ret_debug = ret = []
+    @ret_access = ret = []
     while @text.length > 0
       found = false
       @loc_arr = loc_arr = []
