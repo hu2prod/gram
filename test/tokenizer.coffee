@@ -212,9 +212,20 @@ describe 'tokenizer section', ()->
   
   it 'single parse with atparse_unique_check', ()->
     t = new g.Tokenizer
-    t.atparse_unique_check = true
-    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i).fll_add('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_')
+    t.rword 'abc'
+    t.rword 'def', true
     t.go 'abc'
+    t.go 'aBc'
+    t.go 'def'
+    util.throws ()->
+      t.go 'dEf'
+    return
+  
+  it 'rword', ()->
+    t = new g.Tokenizer
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i)
+    list = t.go 'aa'
+    assert.equal list[0][0].mx_hash.hash_key, 'id'
     return
   
   it 'multiple parse with atparse_unique_check', ()->

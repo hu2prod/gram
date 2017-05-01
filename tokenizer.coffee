@@ -59,7 +59,7 @@ class @Tokenizer
     @positive_symbol_table = {}
     @non_marked_rules = []
   rword : (text, case_sensitive = false)->
-    text = RegExp.quote text
+    text = RegExp.escape text
     @parser_list.push new module.Token_parser 'reserved_word', new RegExp "^"+text, if case_sensitive then '' else 'i'
   set_text:(text)->
     # @text = ltrim(text, ' \t')
