@@ -237,3 +237,24 @@ describe 'tokenizer section', ()->
       t.go 'abc'
     return
   
+  it 'has pos and line', ()->
+    t = new g.Tokenizer
+    t.parser_list.push (new g.Token_parser 'id', /^[_a-z][_a-z0-9]*/i)
+    t.parser_list.push (new g.Token_parser 'space', /^\s+/i)
+    list = t.go """
+      a b
+      c
+      """
+    assert.equal list[0][0].pos,  1
+    assert.equal list[0][0].line, 1
+    
+    assert.equal list[1][0].pos,  3
+    assert.equal list[1][0].line, 1
+    
+    # \n stays on prev line
+    assert.equal list[2][0].pos,  4
+    assert.equal list[2][0].line, 1
+    
+    assert.equal list[3][0].pos,  1
+    assert.equal list[3][0].line, 2
+  

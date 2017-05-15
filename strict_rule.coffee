@@ -1,9 +1,11 @@
 module = @
 class @Node
-  mx_hash     : {}
+  mx_hash       : {}
   penetration_hash: {}
-  value       : ''
+  value         : ''
   value_array   : []
+  line          : -1
+  pos           : -1
   constructor   : (value = '', mx_hash = {})->
     @mx_hash    = mx_hash
     @value      = value

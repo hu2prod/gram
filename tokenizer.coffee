@@ -46,11 +46,14 @@ class @Tokenizer
   is_prepared : false
   tail_space_len: 0
   ret_access : []
+  line       : 0
+  pos        : 0
   
   @first_char_table  : {}
   @profile  : false
   @positive_symbol_table = {}
   @non_marked_rules = []
+  
   constructor : ()->
     @parser_list= []
     @prepare  = []
@@ -58,22 +61,37 @@ class @Tokenizer
     @first_char_table  = {}
     @positive_symbol_table = {}
     @non_marked_rules = []
+  
   rword : (text, case_sensitive = false)->
     text = RegExp.escape text
     @parser_list.push new module.Token_parser 'reserved_word', new RegExp "^"+text, if case_sensitive then '' else 'i'
+  
   set_text:(text)->
     # @text = ltrim(text, ' \t')
     @text = text
+  
   try_regex   : (regex)->
     regex.exec(@text)
+  
   regex     : (regex)->
     ret = regex.exec(@text)
     return null if !ret
+    cap_text = ret[0]
+    if -1 == cap_text.indexOf '\n'
+      @pos += cap_text.length
+    else
+      line_list = cap_text.split('\n')
+      cap_text = line_list.last()
+      @line += line_list.length-1
+      @pos = cap_text.length+1
+    
     @text = @text.substr ret[0].length
     @tail_space_len = /^[ \t]*/.exec(@text)[0].length
+    @pos += @tail_space_len
     # @text = ltrim(@text, ' \t')
     @text = @text.substr @tail_space_len
     ret
+  
   initial_prepare_table: ()->
     @positive_symbol_table = {}
     @non_marked_rules = []
@@ -87,6 +105,7 @@ class @Tokenizer
     
     @is_prepared = true
     return
+  
   prepare_table : ()->
     @first_char_table = {}
     for i in [0 ... @text.length]
@@ -100,6 +119,7 @@ class @Tokenizer
         list.push v unless v.first_letter_list_discard[ch]?
       @first_char_table[ch] = list
     return
+  
   reject : ()->
     @need_reject = true
     new_loc_arr = []
@@ -113,7 +133,10 @@ class @Tokenizer
     for v in new_loc_arr
       @loc_arr.push v
     return
+  
   go      : (text)->
+    @line = 1
+    @pos  = 1
     for v in @prepare
       v @
     @set_text text
@@ -140,6 +163,8 @@ class @Tokenizer
           node.regex = v.regex # parasite
           node.value = reg_ret[0]
           node.atparse = v.atparse if v.atparse?
+          node.line = @line
+          node.pos  = @pos
           loc_arr.push node
       throw new Error "can't tokenize '#{@text.substr(0,100)}'..." if loc_arr.length == 0
       loop
