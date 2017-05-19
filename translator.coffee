@@ -93,6 +93,8 @@ class @Translator
   translator_hash : {}
   sink_point_stack: []
   cur_sink_point  : null
+  key : 'ult'
+  
   constructor : ()->
     @translator_hash  = {}
     @reset()
@@ -109,8 +111,8 @@ class @Translator
     @cur_sink_point = new module.Sink_point
     @sink_point_stack   = []
   translate   : (node)->
-    key = node.mx_hash.ult
-    throw new Error "unknown node type '#{key}' mx='#{JSON.stringify node.mx_hash}'" if !@translator_hash[key]?
+    key = node.mx_hash[@key]
+    throw new Error "unknown node type '#{key}' mx='#{JSON.stringify node.mx_hash}' required key '#{@key}'" if !@translator_hash[key]?
     @translator_hash[key].translate @, node
   # really public
   trans   : (node)->
