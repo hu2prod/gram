@@ -112,7 +112,7 @@ class @Translator
     @sink_point_stack   = []
   translate   : (node)->
     key = node.mx_hash[@key]
-    throw new Error "unknown node type '#{key}' mx='#{JSON.stringify node.mx_hash}' required key '#{@key}'" if !@translator_hash[key]?
+    throw new Error "unknown node type '#{key}' mx='#{JSON.stringify node.mx_hash}' required key '#{@key}' value='#{node.value}'" if !@translator_hash[key]?
     @translator_hash[key].translate @, node
   # really public
   trans   : (node)->
