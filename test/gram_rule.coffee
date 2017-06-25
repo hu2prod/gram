@@ -1,7 +1,7 @@
 assert = require 'assert'
-util = require 'fy/test_util'
+util = (require 'fy').test_util
 
-gram_rule = require '../gram_rule'
+gram_rule = require '../src/gram_rule'
 Gram = gram_rule.Gram
 perf_bench = (gram, string)->
   start = new Date

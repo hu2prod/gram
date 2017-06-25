@@ -1,5 +1,5 @@
 assert = require 'assert'
-util = require 'fy/test_util'
+util = (require 'fy').test_util
 
 {
   Gram_cache
@@ -7,7 +7,7 @@ util = require 'fy/test_util'
   Tokenizer
   Token_parser
   Gram
-} = require '../index'
+} = require '../src/index'
 
 ss = new Super_serializer
 ss_test = (t)->

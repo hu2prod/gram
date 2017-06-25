@@ -1,7 +1,7 @@
 assert = require 'assert'
-util = require 'fy/test_util'
+util = (require 'fy').test_util
 
-g = require '../index.coffee'
+g = require '../src/index.coffee'
 
 describe 'tokenizer section', ()->
   # ###################################################################################################

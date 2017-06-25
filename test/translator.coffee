@@ -1,7 +1,7 @@
 assert = require 'assert'
-util = require 'fy/test_util'
+util = (require 'fy').test_util
 
-g = require '../index.coffee'
+g = require '../src/index.coffee'
 {Translator, Gram, Tokenizer, Token_parser,
   bin_op_translator_holder, bin_op_translator_framework
   un_op_translator_holder,  un_op_translator_framework

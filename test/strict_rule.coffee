@@ -1,7 +1,7 @@
 assert = require 'assert'
-util = require 'fy/test_util'
+util = (require 'fy').test_util
 
-strict_rule = require '../strict_rule'
+strict_rule = require '../src/strict_rule'
 Node = strict_rule.Node
 strict_rule_parser = strict_rule.strict_rule_parser
 mx_rule_parser = strict_rule.mx_rule_parser
