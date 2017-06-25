@@ -1,5 +1,5 @@
 assert = require 'assert'
-util = (require 'fy').test_util
+util = require 'fy/test_util'
 
 {
   Gram_cache

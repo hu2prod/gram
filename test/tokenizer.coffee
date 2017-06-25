@@ -1,5 +1,5 @@
 assert = require 'assert'
-util = (require 'fy').test_util
+util = require 'fy/test_util'
 
 g = require '../src/index.coffee'
 

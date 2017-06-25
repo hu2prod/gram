@@ -1,5 +1,5 @@
 assert = require 'assert'
-util = (require 'fy').test_util
+util = require 'fy/test_util'
 
 strict_rule = require '../src/strict_rule'
 Node = strict_rule.Node
